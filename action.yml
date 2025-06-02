@@ -1,0 +1,33 @@
+name: 'Ai Pull Request Explainer'
+
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
+    default: ${{ github.token }}
+
+  GEMINI_API_KEY:
+    description: 'Gemini API Key'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout Action Code
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+
+    - name: Install Dependencies
+      run: bun install --frozen-lockfile
+      shell: bash
+      working-directory: ${{ github.action_path }}
+
+    - name: Run TypeScript with Bun
+      run: bun run ${{ github.action_path }}/src/index.ts # مسیر فایل اصلی TypeScript شما
+      shell: bash
+
+branding:
+  icon: 'code'
+  color: 'blue'
