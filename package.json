@@ -1,0 +1,14 @@
+{
+  "name": "pr-ai-summary",
+  "scripts": {
+    "dev": "HTTPS_PROXY='127.0.0.1:8086' bun run src/index.ts"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1",
+    "@google/genai": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
