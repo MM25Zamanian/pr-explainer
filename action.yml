@@ -1,5 +1,8 @@
 name: 'Ai Pull Request Explainer'
-description: 'It's an API that automatically generates PR descriptions by analyzing code diffs using LLMs like Gemini. It's designed for CI workflows on GitHub and provides structured outputs in JSON.'
+description: >
+  It's an API that automatically generates PR descriptions by analyzing code diffs
+  using LLMs like Gemini. It's designed for CI workflows on GitHub and
+  provides structured outputs in JSON.
 
 inputs:
   GITHUB_TOKEN:
@@ -32,3 +35,4 @@ runs:
 branding:
   icon: 'code'
   color: 'blue'
+  
