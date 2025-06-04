@@ -12,6 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Display action.yml content # مرحله دیباگ جدید
+        run: |
+          echo "--- Content of action.yml at runtime ---"
+          cat ./action.yml
+          echo "---------------------------------------"
+        shell: bash
+
       - name: PR Auto Describe
         uses: ./
         with:
