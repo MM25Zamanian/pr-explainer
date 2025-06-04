@@ -25,21 +25,37 @@ async function readPromptTemplateFromFile(): Promise<string> {
   }
 }
 
-export async function getPrompt(input: unknown): Promise<string> {
+export async function getPrompt(
+  changes: unknown,
+  labels: unknown[]
+): Promise<string> {
   const promptTemplate = await readPromptTemplateFromFile();
 
-  let stringifiedInput: string;
+  let stringifiedChanges: string;
   try {
-    stringifiedInput = JSON.stringify(input);
+    stringifiedChanges = JSON.stringify(changes);
   } catch (error) {
     throw new Error(
-      `Failed to serialize input data for prompt: ${
+      `Failed to serialize changes data for prompt: ${
         error instanceof Error ? error.message : String(error)
       }`
     );
   }
 
-  return promptTemplate.replaceAll("<<CHANGES>>", stringifiedInput);
+  let stringifiedLabels: string;
+  try {
+    stringifiedLabels = JSON.stringify(labels);
+  } catch (error) {
+    throw new Error(
+      `Failed to serialize labels data for prompt: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+  }
+
+  return promptTemplate
+    .replaceAll("<<CHANGES>>", stringifiedChanges)
+    .replaceAll("<<AVAILABLE_LABELS>>", stringifiedLabels);
 }
 
 export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
@@ -50,22 +66,25 @@ export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
       temperature: 1.3,
       responseMimeType: "application/json",
       responseSchema: {
-        type: Type.OBJECT,
+        type: Type.OBJECT, // Assuming 'Type' is correctly imported, e.g., FunctionDeclarationSchemaType from @google/genai
         properties: {
           description: {
             type: Type.STRING,
-            description: `A Markdown-formatted, technically detailed explanation of what has changed in this pull request. It must analyze the patch content and summarize all significant modifications to logic, models, configurations, workflows, or code structure.`,
+            description:
+              `Generate a comprehensive, exceptionally well-structured, and fluent Markdown-formatted technical explanation of the pull request changes. The explanation must analyze the full patch content, summarize all significant modifications (to logic, models, data schemas, configurations, workflows, UI components, or code structure), and mention specific files. It should be enhanced with appropriate emojis (e.g., ✨, 🐛, ♻️, ⚙️, 📝, ⚡️, 🔒) to improve readability, convey impact, and add a touch of professional polish. Use Markdown headings, lists, and code formatting extensively.`.trim(),
           },
           title: {
             type: Type.STRING,
-            description: `A one-line Conventional Commit title in the format <type>(scope): description. Valid types: feat, fix, refactor, chore, test, docs, ci, build. Scope must reflect the main area changed.`,
+            description:
+              `Create a concise, one-line Conventional Commit title following the strict format: <type>(scope): short description in imperative mood. Valid types include: feat, fix, refactor, chore, test, docs, ci, build. The 'scope' is mandatory and must precisely reflect the main area, component, or module impacted by the PR (e.g., user-auth, api-gateway, payment-schema).`.trim(),
           },
           recommendedLabels: {
             type: Type.ARRAY,
             items: {
-              type: Type.STRING,
+              type: Type.STRING, // Each item in the array will be a string (label name)
             },
-            description: `A list of GitHub labels selected from the provided availableLabels array that best describe the type and area of changes in this pull request.`,
+            description:
+              `Return an array of GitHub label strings. These labels must be selected *exclusively* from the 'Available GitHub Labels' list that was provided in the input prompt. The selection should accurately categorize the pull request based on its analyzed changes.`.trim(),
           },
         },
         required: ["description", "title", "recommendedLabels"],
@@ -77,5 +96,9 @@ export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
     throw new Error("gemini not have text result");
   }
 
-  return JSON.parse(response.text) as { description: string; title: string };
+  return JSON.parse(response.text) as {
+    description: string;
+    title: string;
+    recommendedLabels: string[];
+  };
 }

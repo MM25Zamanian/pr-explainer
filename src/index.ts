@@ -1,7 +1,7 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { GoogleGenAI } from "@google/genai";
-import { getDiff, updatePullRequest } from "./github.utils.js";
+import { getAllLabels, getDiff, updatePullRequest } from "./github.utils.js";
 import { getAIResult, getPrompt } from "./gemini.utils.js";
 
 async function main() {
@@ -20,12 +20,17 @@ async function main() {
     });
     const octokit = github.getOctokit(githubToken);
 
-    const diff = await getDiff(octokit, github.context);
+    const changes = await getDiff(octokit, github.context);
+    const labels = await getAllLabels(octokit, github.context);
 
-    const prompt = await getPrompt(diff);
+    const prompt = await getPrompt(changes, labels);
     const result = await getAIResult(gemini, prompt);
 
     if (result) {
+      core.info(`title: ${result.title}`);
+      core.info(`description: ${result.description}`);
+      core.info(`recommendedLabels: ${result.recommendedLabels.join(' | ')}`);
+      
       await updatePullRequest(
         octokit,
         github.context,
