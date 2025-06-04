@@ -6,10 +6,13 @@ import { getAIResult, getPrompt } from "./gemini.utils";
 
 async function main() {
   try {
-    const githubToken = core.getInput("GITHUB_TOKEN", {
-      required: true,
-      trimWhitespace: true,
-    });
+    const githubToken = core.getInput("GITHUB_TOKEN");
+    core.warning(`DEBUG: GITHUB_TOKEN value is "${githubToken}"`);
+
+    if (!githubToken) {
+      core.setFailed("DEBUG: GITHUB_TOKEN is empty or not supplied!");
+      return;
+    }
     const geminiApiKey = core.getInput("GEMINI_API_KEY", {
       required: true,
       trimWhitespace: true,
