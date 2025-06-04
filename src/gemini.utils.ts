@@ -54,16 +54,21 @@ export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
         properties: {
           description: {
             type: Type.STRING,
-            description:
-              `Provide a complete and technically detailed Markdown-formatted explanation of what has changed in this pull request. The explanation must analyze the full patch content of each file and summarize meaningful code-level or structural modifications. Focus on functionality, logic, models, workflows, or configuration changes. Use professional technical language with clear structure (e.g., paragraphs or bullet points).`.trim(),
+            description: `A Markdown-formatted, technically detailed explanation of what has changed in this pull request. It must analyze the patch content and summarize all significant modifications to logic, models, configurations, workflows, or code structure.`,
           },
           title: {
             type: Type.STRING,
-            description:
-              `Write a one-line title using the Conventional Commits standard. Format: <type>(scope): short description. The 'scope' is required and must accurately reflect the main area affected by the PR (e.g., schema, api, ui, workflow, auth, infra). Use one of: feat, fix, chore, docs, refactor, test, ci, build. Be precise, clear, and concise.`.trim(),
+            description: `A one-line Conventional Commit title in the format <type>(scope): description. Valid types: feat, fix, refactor, chore, test, docs, ci, build. Scope must reflect the main area changed.`,
+          },
+          recommendedLabels: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.STRING,
+            },
+            description: `A list of GitHub labels selected from the provided availableLabels array that best describe the type and area of changes in this pull request.`,
           },
         },
-        required: ["description", "title"],
+        required: ["description", "title", "recommendedLabels"],
       },
     },
   });

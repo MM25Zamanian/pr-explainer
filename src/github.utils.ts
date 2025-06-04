@@ -1,4 +1,4 @@
-import { GitHub } from "@actions/github/lib/utils";
+import { GitHub } from "@actions/github/lib/utils.js";
 import * as github from "@actions/github";
 
 export async function getDiff(
@@ -6,7 +6,7 @@ export async function getDiff(
   context: typeof github.context
 ) {
   const { data } = await octokit.rest.pulls.listFiles({
-    ...(context.repo ?? { owner: "gecut", repo: "form.amirghadir.ir" }),
+    ...context.repo,
     pull_number: context.payload.pull_request?.number ?? 1,
   });
 
