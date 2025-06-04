@@ -1,8 +1,8 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { GoogleGenAI } from "@google/genai";
-import { getDiff } from "./github.utils";
-import { getAIResult, getPrompt } from "./gemini.utils";
+import { getDiff } from "./github.utils.js";
+import { getAIResult, getPrompt } from "./gemini.utils.js";
 
 async function main() {
   try {

@@ -1,9 +1,32 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { readFile } from 'fs/promises';
+import path from 'node:path';
 
-export async function getPrompt(input: unknown) {
-  const prompt = await Bun.file("./.prompt").text();
+async function readPromptTemplateFromFile(): Promise<string> {
+  const workspaceDirectory = process.env.GITHUB_WORKSPACE || process.cwd();
+  const promptFilePath = path.join(workspaceDirectory, '.prompt');
 
-  return prompt.replace("<<CHANGES>>", JSON.stringify(input));
+  try {
+    return await readFile(promptFilePath, { encoding: 'utf-8' });
+  } catch (error) {
+    if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+      throw new Error(`Prompt template file not found at: ${promptFilePath}. Please ensure the '.prompt' file exists in the root of your repository.`);
+    }
+    throw new Error(`Failed to read prompt template file '${promptFilePath}': ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+export async function getPrompt(input: unknown): Promise<string> {
+  const promptTemplate = await readPromptTemplateFromFile();
+  
+  let stringifiedInput: string;
+  try {
+    stringifiedInput = JSON.stringify(input);
+  } catch (error) {
+    throw new Error(`Failed to serialize input data for prompt: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  return promptTemplate.replaceAll("<<CHANGES>>", stringifiedInput);
 }
 
 export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
