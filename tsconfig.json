@@ -1,40 +1,25 @@
 {
   "compilerOptions": {
-    // --- تنظیمات اصلی برای محیط و ماژول‌ها ---
-    "target": "ES2022", // یا "ESNext". کد جاوااسکریپت مدرن برای Node.js 20 تولید می‌کند.
-    "module": "NodeNext", // بهترین گزینه برای پروژه‌های مدرن Node.js با "type": "module" در package.json.
-    "moduleResolution": "NodeNext", // استراتژی مدرن برای پیدا کردن ماژول‌ها، هماهنگ با Node.js.
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
-    // --- بهترین شیوه‌ها و بررسی دقیق کد ---
-    "strict": true, // فعال‌سازی تمام بررسی‌های دقیق تایپ‌اسکریپت (از فایل شما باقی مانده و عالی است).
-    "esModuleInterop": true, // امکان import کردن ماژول‌های CommonJS به شکل ساده‌تر (از فایل شما باقی مانده و خوب است).
-    "forceConsistentCasingInFileNames": true, // جلوگیری از مشکلات حساسیت به بزرگی و کوچکی حروف در نام فایل‌ها.
-    "skipLibCheck": true, // افزایش سرعت کامپایل با صرف‌نظر از بررسی تایپ فایل‌های d.ts در node_modules.
-    "isolatedModules": true, // اطمینان از اینکه هر فایل می‌تواند به طور مستقل کامپایل شود (مفید برای ابزارهای بیلد مدرن مانند Bun).
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
 
-    // --- گزینه‌های مفید برای توسعه و دیباگ ---
-    "resolveJsonModule": true, // امکان import کردن مستقیم فایل‌های .json.
-    "sourceMap": true, // تولید فایل‌های sourcemap برای دیباگ (توجه: bun build هم فلگ --sourcemap خودش را دارد).
-    
-    // --- گزینه‌های مربوط به JSX (اگر بخش‌هایی از پروژه شما از Hono/JSX استفاده می‌کنند، اینها را نگه دارید) ---
-    // اگر اسکریپت اصلی اکشن شما (src/index.ts) مستقیماً از JSX استفاده نمی‌کند، این خطوط برای بخش اکشن ضروری نیستند.
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "resolveJsonModule": true,
+    "sourceMap": true,
 
-    // --- تنظیمات خروجی (بیشتر برای tsc مستقیم مفید است، bun build تنظیمات خودش را دارد) ---
-    // "outDir": "./dist", // bun build از --outfile استفاده می‌کند، این بیشتر برای tsc است.
-    // "rootDir": "./src", // اگر تمام فایل‌های منبع در پوشه src باشند.
-    // "declaration": true, // تولید فایل‌های .d.ts (اگر این یک کتابخانه بود بسیار مفید می‌شد).
-    // "declarationMap": true, // تولید sourcemap برای فایل‌های .d.ts.
-
-    // --- کتابخانه‌های مورد استفاده (برای Node.js معمولاً کافی است) ---
-    "lib": ["ESNext"] // یا ["ES2022"]، شامل ویژگی‌های مدرن جاوااسکریپت.
+    "lib": ["ESNext"]
   },
   "include": [
-    "src/**/*.ts" // مشخص می‌کند کدام فایل‌ها باید کامپایل شوند.
+    "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules", // پوشه‌هایی که نباید کامپایل شوند.
-    "dist" // پوشه خروجی بیلد.
+    "node_modules",
+    "dist"
   ]
 }
