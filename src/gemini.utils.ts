@@ -1,29 +1,42 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { readFile } from 'fs/promises';
-import path from 'node:path';
+import { readFile } from "fs/promises";
+import path from "node:path";
 
 async function readPromptTemplateFromFile(): Promise<string> {
   const workspaceDirectory = process.env.GITHUB_WORKSPACE || process.cwd();
-  const promptFilePath = path.join(workspaceDirectory, '.prompt');
+  const promptFilePath = path.join(workspaceDirectory, ".prompt");
 
   try {
-    return await readFile(promptFilePath, { encoding: 'utf-8' });
+    return await readFile(promptFilePath, { encoding: "utf-8" });
   } catch (error) {
-    if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new Error(`Prompt template file not found at: ${promptFilePath}. Please ensure the '.prompt' file exists in the root of your repository.`);
+    if (
+      error instanceof Error &&
+      (error as NodeJS.ErrnoException).code === "ENOENT"
+    ) {
+      throw new Error(
+        `Prompt template file not found at: ${promptFilePath}. Please ensure the '.prompt' file exists in the root of your repository.`
+      );
     }
-    throw new Error(`Failed to read prompt template file '${promptFilePath}': ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to read prompt template file '${promptFilePath}': ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 }
 
 export async function getPrompt(input: unknown): Promise<string> {
   const promptTemplate = await readPromptTemplateFromFile();
-  
+
   let stringifiedInput: string;
   try {
     stringifiedInput = JSON.stringify(input);
   } catch (error) {
-    throw new Error(`Failed to serialize input data for prompt: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to serialize input data for prompt: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 
   return promptTemplate.replaceAll("<<CHANGES>>", stringifiedInput);
@@ -55,5 +68,9 @@ export async function getAIResult(gemini: GoogleGenAI, prompt: string) {
     },
   });
 
-  return response.text;
+  if (!response.text) {
+    throw new Error("gemini not have text result");
+  }
+
+  return JSON.parse(response.text) as { description: string; title: string };
 }

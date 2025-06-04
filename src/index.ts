@@ -1,7 +1,7 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { GoogleGenAI } from "@google/genai";
-import { getDiff } from "./github.utils.js";
+import { getDiff, updatePullRequest } from "./github.utils.js";
 import { getAIResult, getPrompt } from "./gemini.utils.js";
 
 async function main() {
@@ -18,8 +18,8 @@ async function main() {
       trimWhitespace: true,
     });
 
-    core.info(`GITHUB_TOKEN: ${githubToken}`)
-    core.info(`GEMINI_API_KEY: ${geminiApiKey}`)
+    core.info(`GITHUB_TOKEN: ${githubToken}`);
+    core.info(`GEMINI_API_KEY: ${geminiApiKey}`);
 
     const gemini = new GoogleGenAI({
       apiKey: geminiApiKey,
@@ -31,7 +31,14 @@ async function main() {
     const prompt = await getPrompt(diff);
     const result = await getAIResult(gemini, prompt);
 
-    result && core.info(result);
+    if (result) {
+      await updatePullRequest(
+        octokit,
+        github.context,
+        result.description,
+        result.title
+      );
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error);
   }
