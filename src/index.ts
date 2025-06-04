@@ -15,6 +15,9 @@ async function main() {
       trimWhitespace: true,
     });
 
+    core.info(`GITHUB_TOKEN: ${githubToken}`)
+    core.info(`GEMINI_API_KEY: ${geminiApiKey}`)
+
     const gemini = new GoogleGenAI({
       apiKey: geminiApiKey,
     });
