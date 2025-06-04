@@ -1,0 +1,21 @@
+on:
+  pull_request:
+    types: [synchronize, opened]
+
+jobs:
+  explainer:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: PR Auto Describe
+        uses: ./
+        with:
+          # GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

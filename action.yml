@@ -1,36 +1,16 @@
 name: 'Ai Pull Request Explainer'
-description: >
-  It's an API that automatically generates PR descriptions by analyzing code diffs
-  using LLMs like Gemini.
+description: 'Automatically generates PR descriptions by analyzing code diffs using LLMs like Gemini.'
 
 inputs:
   GITHUB_TOKEN:
-    description: 'GitHub token'
+    description: 'GitHub token for Octokit'
     required: true
-    default: ${{ github.token }}
-
+    default: ${{ github.token }} # مقدار پیش‌فرض کلیدی
   GEMINI_API_KEY:
     description: 'Gemini API Key'
     required: true
 
 runs:
-  using: 'composite'
-  steps:
-    - name: Checkout Action Code
-      uses: actions/checkout@v4
-
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-
-    - name: Install Dependencies
-      run: bun install --frozen-lockfile
-      shell: bash
-      working-directory: ${{ github.action_path }}
-
-    - name: Run TypeScript with Bun
-      run: bun run ${{ github.action_path }}/src/index.ts
-      shell: bash
-
-branding:
-  icon: 'code'
-  color: 'blue'
+  using: 'node20'
+  main: 'dist/main.mjs'
+  

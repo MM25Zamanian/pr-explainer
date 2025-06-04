@@ -1,37 +1,54 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { GoogleGenAI } from "@google/genai";
-import { getDiff } from "./github.utils";
-import { getAIResult, getPrompt } from "./gemini.utils";
+import {
+  getAllLabels,
+  getDiff,
+  updatePullRequest,
+  updatePullRequestLabels,
+} from "./github.utils.js";
+import { getAIResult, getPrompt } from "./gemini.utils.js";
 
 async function main() {
   try {
-    const githubToken = core.getInput("GITHUB_TOKEN");
-    core.warning(`DEBUG: GITHUB_TOKEN value is "${githubToken}"`);
-
-    if (!githubToken) {
-      core.setFailed("DEBUG: GITHUB_TOKEN is empty or not supplied!");
-      return;
-    }
+    const githubToken = core.getInput("GITHUB_TOKEN", {
+      required: true,
+      trimWhitespace: true,
+    });
     const geminiApiKey = core.getInput("GEMINI_API_KEY", {
       required: true,
       trimWhitespace: true,
     });
-
-    core.info(`GITHUB_TOKEN: ${githubToken}`)
-    core.info(`GEMINI_API_KEY: ${geminiApiKey}`)
 
     const gemini = new GoogleGenAI({
       apiKey: geminiApiKey,
     });
     const octokit = github.getOctokit(githubToken);
 
-    const diff = await getDiff(octokit, github.context);
+    const changes = await getDiff(octokit, github.context);
+    const labels = await getAllLabels(octokit, github.context);
 
-    const prompt = await getPrompt(diff);
+    const prompt = await getPrompt(changes, labels);
     const result = await getAIResult(gemini, prompt);
 
-    result && core.info(result);
+    if (result) {
+      core.info(`title: ${result.title}`);
+      core.info(`description: ${result.description}`);
+      core.info(`recommendedLabels: ${result.recommendedLabels.join(" | ")}`);
+
+      await updatePullRequest(
+        octokit,
+        github.context,
+        result.description,
+        result.title
+      );
+
+      await updatePullRequestLabels(
+        octokit,
+        github.context,
+        result.recommendedLabels
+      );
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error);
   }
