@@ -6,8 +6,9 @@ jobs:
   explainer:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code
