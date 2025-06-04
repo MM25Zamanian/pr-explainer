@@ -14,8 +14,8 @@ jobs:
 
       - name: Debug Tokens and Secrets at Workflow Level # <--- مرحله جدید
         run: |
-          echo "Workflow GITHUB_TOKEN context: ${{ github.token && 'Token is available' || 'Token is NOT available' }}"
-          echo "Workflow GEMINI_API_KEY secret: ${{ secrets.GEMINI_API_KEY && 'Secret is available' || 'Secret is NOT available' }}"
+          echo "Workflow GITHUB_TOKEN context: ${{ github.token }}"
+          echo "Workflow GEMINI_API_KEY secret: ${{ secrets.GEMINI_API_KEY }}"
         shell: bash
 
       - name: Display action.yml content # مرحله دیباگ جدید
