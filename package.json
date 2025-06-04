@@ -1,7 +1,8 @@
 {
   "name": "pr-ai-summary",
   "scripts": {
-    "dev": "HTTPS_PROXY='127.0.0.1:8086' bun run src/index.ts"
+    "dev": "HTTPS_PROXY='127.0.0.1:8086' bun run src/index.ts",
+    "build": "bun build ./src/index.ts --outfile ./dist/bundle.js --target=node --minify"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",

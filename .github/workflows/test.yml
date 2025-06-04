@@ -1,6 +1,6 @@
 on:
   pull_request:
-    types: [synchronize, reopened, labeled]
+    types: [synchronize, opened, labeled]
 
 jobs:
   explainer:
@@ -8,22 +8,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Debug Tokens and Secrets at Workflow Level # <--- مرحله جدید
-        run: |
-          echo "Workflow GITHUB_TOKEN context: ${{ github.token }}"
-          echo "Workflow GEMINI_API_KEY secret: ${{ secrets.GEMINI_API_KEY }}"
-        shell: bash
-
-      - name: Display action.yml content # مرحله دیباگ جدید
-        run: |
-          echo "--- Content of action.yml at runtime ---"
-          cat ./action.yml
-          echo "---------------------------------------"
-        shell: bash
 
       - name: PR Auto Describe
         uses: ./
