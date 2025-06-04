@@ -1,7 +1,12 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { GoogleGenAI } from "@google/genai";
-import { getAllLabels, getDiff, updatePullRequest } from "./github.utils.js";
+import {
+  getAllLabels,
+  getDiff,
+  updatePullRequest,
+  updatePullRequestLabels,
+} from "./github.utils.js";
 import { getAIResult, getPrompt } from "./gemini.utils.js";
 
 async function main() {
@@ -29,13 +34,19 @@ async function main() {
     if (result) {
       core.info(`title: ${result.title}`);
       core.info(`description: ${result.description}`);
-      core.info(`recommendedLabels: ${result.recommendedLabels.join(' | ')}`);
-      
+      core.info(`recommendedLabels: ${result.recommendedLabels.join(" | ")}`);
+
       await updatePullRequest(
         octokit,
         github.context,
         result.description,
         result.title
+      );
+
+      await updatePullRequestLabels(
+        octokit,
+        github.context,
+        result.recommendedLabels
       );
     }
   } catch (error) {
