@@ -7,7 +7,8 @@ import {
   updatePullRequest,
   updatePullRequestLabels,
 } from "./github.utils.js";
-import { getAIResult, getPrompt } from "./gemini.utils.js";
+import { getAIResult } from "./gemini.utils.js";
+import { generateGeminiPrompt } from "./gemini.prompt.js";
 
 async function main() {
   try {
@@ -28,7 +29,7 @@ async function main() {
     const changes = await getDiff(octokit, github.context);
     const labels = await getAllLabels(octokit, github.context);
 
-    const prompt = await getPrompt(changes, labels);
+    const prompt = generateGeminiPrompt(labels, changes);
     const result = await getAIResult(gemini, prompt);
 
     if (result) {
