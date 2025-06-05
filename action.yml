@@ -1,9 +1,6 @@
 name: 'Ai Pull Request Explainer'
 description: >
-  This GitHub Action employs Large Language Models (like Gemini) to analyze pull request diffs. 
-  It automatically generates detailed, structured technical descriptions, Conventional Commit titles, 
-  and suggests appropriate GitHub labels. These labels can also be automatically applied, 
-  streamlining the code review and documentation workflow.
+  Gemini AI GitHub Action for PR diffs: crafts structured descriptions, titles, & applies labels. Streamlines reviews.
 
 branding:
   icon: 'book-open'
